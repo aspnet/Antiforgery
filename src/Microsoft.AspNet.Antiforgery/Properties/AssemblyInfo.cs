@@ -5,5 +5,5 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
-[assembly: InternalsVisibleTo("Microsoft.AspNet.Antiforgery.Test")]
+[assembly: InternalsVisibleTo("Microsoft.AspNet.Antiforgery.Tests")]
 [assembly: AssemblyMetadata("Serviceable", "True")]
