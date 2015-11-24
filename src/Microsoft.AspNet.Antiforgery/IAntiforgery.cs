@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.AspNet.Html.Abstractions;
 using Microsoft.AspNet.Http;
 
 namespace Microsoft.AspNet.Antiforgery
@@ -13,18 +14,19 @@ namespace Microsoft.AspNet.Antiforgery
     public interface IAntiforgery
     {
         /// <summary>
-        /// Generates an input field for an antiforgery token. 
+        /// Generates an input field (specifically an &lt;input type="hidden"&gt; element) for an antiforgery token and
+        /// adds it to <paramref name="content"/>.
         /// </summary>
         /// <param name="context">The <see cref="HttpContext"/> associated with the current request.</param>
-        /// <returns>
-        /// A string containing an &lt;input type="hidden"&gt; element. This element should be put inside
-        /// a &lt;form&gt;.
-        /// </returns>
+        /// <param name="content">
+        /// The <see cref="IHtmlContentBuilder"/> to contain the antiforgery token. Intended to be used inside a
+        /// &lt;form&gt; element.
+        /// </param>
         /// <remarks>
         /// This method has a side effect:
         /// A response cookie is set if there is no valid cookie associated with the request.
         /// </remarks>
-        string GetHtml(HttpContext context);
+        void GetHtml(HttpContext context, IHtmlContentBuilder content);
 
         /// <summary>
         /// Generates an <see cref="AntiforgeryTokenSet"/> for this request and stores the cookie token
