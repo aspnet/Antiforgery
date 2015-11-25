@@ -14,19 +14,18 @@ namespace Microsoft.AspNet.Antiforgery
     public interface IAntiforgery
     {
         /// <summary>
-        /// Generates an input field (specifically an &lt;input type="hidden"&gt; element) for an antiforgery token and
-        /// adds it to <paramref name="content"/>.
+        /// Generates an &lt;input type="hidden"&gt; element for an antiforgery token.
         /// </summary>
         /// <param name="context">The <see cref="HttpContext"/> associated with the current request.</param>
-        /// <param name="content">
-        /// The <see cref="IHtmlContentBuilder"/> to contain the antiforgery token. Intended to be used inside a
-        /// &lt;form&gt; element.
-        /// </param>
+        /// <returns>
+        /// A <see cref="IHtmlContent"/> containing an &lt;input type="hidden"&gt; element. This element should be put
+        /// inside a &lt;form&gt;.
+        /// </returns>
         /// <remarks>
         /// This method has a side effect:
         /// A response cookie is set if there is no valid cookie associated with the request.
         /// </remarks>
-        void GetHtml(HttpContext context, IHtmlContentBuilder content);
+        IHtmlContent GetHtml(HttpContext context);
 
         /// <summary>
         /// Generates an <see cref="AntiforgeryTokenSet"/> for this request and stores the cookie token

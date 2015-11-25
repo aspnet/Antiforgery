@@ -34,16 +34,11 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <inheritdoc />
-        public void GetHtml(HttpContext context, IHtmlContentBuilder content)
+        public IHtmlContent GetHtml(HttpContext context)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
-            }
-
-            if (content == null)
-            {
-                throw new ArgumentNullException(nameof(content));
             }
 
             CheckSSLConfig(context);
@@ -53,12 +48,14 @@ namespace Microsoft.AspNet.Antiforgery
             // Though FormToken normally contains only US-ASCII letters, numbers, '-', and '_', must assume the
             // IAntiforgeryTokenSerializer implementation has been overridden. Similarly, users may choose a
             // FormFieldName containing almost any character.
-            content
+            var content = new HtmlContentBuilder()
                 .AppendHtml("<input name=\"")
                 .Append(_options.FormFieldName)
                 .AppendHtml("\" type=\"hidden\" value=\"")
                 .Append(tokenSet.FormToken)
                 .AppendHtml("\" />");
+
+            return content;
         }
 
         /// <inheritdoc />

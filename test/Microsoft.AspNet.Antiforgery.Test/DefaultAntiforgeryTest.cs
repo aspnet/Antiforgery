@@ -73,10 +73,9 @@ namespace Microsoft.AspNet.Antiforgery
             };
 
             var antiforgery = GetAntiforgery(options);
-            var content = new HtmlContentBuilder();
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => antiforgery.GetHtml(httpContext, content));
+            var exception = Assert.Throws<InvalidOperationException>(() => antiforgery.GetHtml(httpContext));
             Assert.Equal(
                  @"The antiforgery system has the configuration value AntiforgeryOptions.RequireSsl = true, " +
                  "but the current request is not an SSL request.",
@@ -161,16 +160,15 @@ namespace Microsoft.AspNet.Antiforgery
             // Make sure the existing cookie is invalid.
             var context = CreateMockContext(options, isOldCookieValid: false);
             var antiforgery = GetAntiforgery(context);
-            var content = new HtmlContentBuilder();
             var encoder = new HtmlTestEncoder();
 
             // Act
-            antiforgery.GetHtml(context.HttpContext, content);
+            var inputElement = antiforgery.GetHtml(context.HttpContext);
 
             // Assert
             using (var writer = new StringWriter())
             {
-                content.WriteTo(writer, encoder);
+                inputElement.WriteTo(writer, encoder);
 
                 Assert.Equal(
                     @"<input name=""HtmlEncode[[form-field-name]]"" type=""hidden"" " +
@@ -204,16 +202,15 @@ namespace Microsoft.AspNet.Antiforgery
                 .Setup(o => o.IsCookieTokenValid(null))
                 .Returns(false);
 
-            var content = new HtmlContentBuilder();
             var encoder = new HtmlTestEncoder();
 
             // Act
-            antiforgery.GetHtml(context.HttpContext, content);
+            var inputElement = antiforgery.GetHtml(context.HttpContext);
 
             // Assert
             using (var writer = new StringWriter())
             {
-                content.WriteTo(writer, encoder);
+                inputElement.WriteTo(writer, encoder);
 
                 Assert.Equal(
                     @"<input name=""HtmlEncode[[form-field-name]]"" type=""hidden"" " +
@@ -236,16 +233,15 @@ namespace Microsoft.AspNet.Antiforgery
             // Make sure the existing cookie is valid and use the same cookie for the mock Token Provider.
             var context = CreateMockContext(options, useOldCookie: true, isOldCookieValid: true);
             var antiforgery = GetAntiforgery(context);
-            var content = new HtmlContentBuilder();
             var encoder = new HtmlTestEncoder();
 
             // Act
-            antiforgery.GetHtml(context.HttpContext, content);
+            var inputElement = antiforgery.GetHtml(context.HttpContext);
 
             // Assert
             using (var writer = new StringWriter())
             {
-                content.WriteTo(writer, encoder);
+                inputElement.WriteTo(writer, encoder);
 
                 Assert.Equal(
                     @"<input name=""HtmlEncode[[form-field-name]]"" type=""hidden"" " +
@@ -268,10 +264,9 @@ namespace Microsoft.AspNet.Antiforgery
             // Generate a new cookie.
             var context = CreateMockContext(options, useOldCookie: false, isOldCookieValid: false);
             var antiforgery = GetAntiforgery(context);
-            var content = new HtmlContentBuilder();
 
             // Act
-            antiforgery.GetHtml(context.HttpContext, content);
+            antiforgery.GetHtml(context.HttpContext);
 
             // Assert
             string xFrameOptions = context.HttpContext.Response.Headers["X-Frame-Options"];
