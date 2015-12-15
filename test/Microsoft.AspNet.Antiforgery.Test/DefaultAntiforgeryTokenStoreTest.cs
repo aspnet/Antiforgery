@@ -220,6 +220,41 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         [Fact]
+        public async Task GetRequestTokens_FormContentType_FallbackHeaderToken()
+        {
+            // Arrange
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.ContentType = "application/json";
+
+            // Will not be accessed
+            httpContext.Request.ContentType = "application/x-www-form-urlencoded";
+            httpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>());
+            httpContext.Request.Cookies = new RequestCookieCollection(new Dictionary<string, string>()
+            {
+                { "cookie-name", "cookie-value" },
+            });
+            httpContext.Request.Headers.Add("header-name", "header-value");
+
+            var options = new AntiforgeryOptions()
+            {
+                CookieName = "cookie-name",
+                FormFieldName = "form-field-name",
+                HeaderName = "header-name",
+            };
+
+            var tokenStore = new DefaultAntiforgeryTokenStore(
+                optionsAccessor: new TestOptionsManager(options),
+                tokenSerializer: new DefaultAntiforgeryTokenSerializer(new EphemeralDataProtectionProvider()));
+
+            // Act
+            var tokens = await tokenStore.GetRequestTokensAsync(httpContext);
+
+            // Assert
+            Assert.Equal("cookie-value", tokens.CookieToken);
+            Assert.Equal("header-value", tokens.RequestToken);
+        }
+
+        [Fact]
         public async Task GetRequestTokens_NonFormContentType_UsesHeaderToken()
         {
             // Arrange
@@ -316,8 +351,8 @@ namespace Microsoft.AspNet.Antiforgery
 
             // Assert         
             Assert.Equal(
-                "The required antiforgery form field \"form-field-name\" and header value \"header-name\" " +
-                "are not present.",
+                "The required antiforgery request token was not provided in either form field \"form-field-name\" " +
+                "or header value \"header-name\".",
                 exception.Message);
         }
 

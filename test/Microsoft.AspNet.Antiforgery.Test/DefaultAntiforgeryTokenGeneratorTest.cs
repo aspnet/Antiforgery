@@ -246,7 +246,7 @@ namespace Microsoft.AspNet.Antiforgery
 
 
         [Fact]
-        public void ValidateTokens_cookieTokenMissing()
+        public void ValidateTokens_CookieTokenMissing()
         {
             // Arrange
             var httpContext = new DefaultHttpContext();
@@ -263,7 +263,7 @@ namespace Microsoft.AspNet.Antiforgery
                 () => tokenProvider.ValidateTokens(httpContext, null, fieldtoken));
 
             var trimmed = ex.Message.Substring(0, ex.Message.IndexOf(Environment.NewLine));
-            Assert.Equal(@"The cookie token must be provided.", trimmed);
+            Assert.Equal(@"The required antiforgery cookie token must be provided.", trimmed);
         }
 
         [Fact]
@@ -284,7 +284,7 @@ namespace Microsoft.AspNet.Antiforgery
                 () => tokenProvider.ValidateTokens(httpContext, cookieToken, null));
 
             var trimmed = ex.Message.Substring(0, ex.Message.IndexOf(Environment.NewLine));
-            Assert.Equal("The request token must be provided.", trimmed);
+            Assert.Equal("The required antiforgery request token must be provided.", trimmed);
         }
 
         [Fact]

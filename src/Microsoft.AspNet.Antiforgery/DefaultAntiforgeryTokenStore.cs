@@ -81,7 +81,7 @@ namespace Microsoft.AspNet.Antiforgery
                 requestToken = form[_options.FormFieldName];
             }
 
-            // Fall back to header if the form value is was not provided.
+            // Fall back to header if the form value was not provided.
             if (requestToken.Count == 0 && _options.HeaderName != null)
             {
                 requestToken = httpContext.Request.Headers[_options.HeaderName];

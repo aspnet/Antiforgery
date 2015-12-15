@@ -155,7 +155,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The cookie token must be provided.
+        /// The required antiforgery cookie token must be provided.
         /// </summary>
         internal static string Antiforgery_CookieToken_MustBeProvided_Generic
         {
@@ -163,7 +163,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The cookie token must be provided.
+        /// The required antiforgery cookie token must be provided.
         /// </summary>
         internal static string FormatAntiforgery_CookieToken_MustBeProvided_Generic()
         {
@@ -203,7 +203,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The required antiforgery form field "{0}" and header value "{1}" are not present.
+        /// The required antiforgery request token was not provided in either form field "{0}" or header value "{1}".
         /// </summary>
         internal static string Antiforgery_RequestToken_MustBeProvided
         {
@@ -211,7 +211,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The required antiforgery form field "{0}" and header value "{1}" are not present.
+        /// The required antiforgery request token was not provided in either form field "{0}" or header value "{1}".
         /// </summary>
         internal static string FormatAntiforgery_RequestToken_MustBeProvided(object p0, object p1)
         {
@@ -219,7 +219,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The request token must be provided.
+        /// The required antiforgery request token must be provided.
         /// </summary>
         internal static string Antiforgery_RequestToken_MustBeProvided_Generic
         {
@@ -227,7 +227,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The request token must be provided.
+        /// The required antiforgery request token must be provided.
         /// </summary>
         internal static string FormatAntiforgery_RequestToken_MustBeProvided_Generic()
         {

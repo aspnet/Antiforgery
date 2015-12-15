@@ -455,7 +455,7 @@ namespace Microsoft.AspNet.Antiforgery
 
             // Assert
             var trimmed = exception.Message.Substring(0, exception.Message.IndexOf(Environment.NewLine));
-            Assert.Equal("The cookie token must be provided.", trimmed);
+            Assert.Equal("The required antiforgery cookie token must be provided.", trimmed);
         }
 
         [Fact]
