@@ -75,7 +75,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The antiforgery cookie token and form field token do not match.
+        /// The antiforgery cookie token and request token do not match.
         /// </summary>
         internal static string AntiforgeryToken_SecurityTokenMismatch
         {
@@ -83,7 +83,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The antiforgery cookie token and form field token do not match.
+        /// The antiforgery cookie token and request token do not match.
         /// </summary>
         internal static string FormatAntiforgeryToken_SecurityTokenMismatch()
         {
@@ -91,7 +91,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// Validation of the provided antiforgery token failed. The cookie token and the form token were swapped.
+        /// Validation of the provided antiforgery token failed. The cookie token and the request token were swapped.
         /// </summary>
         internal static string AntiforgeryToken_TokensSwapped
         {
@@ -99,7 +99,7 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// Validation of the provided antiforgery token failed. The cookie token and the form token were swapped.
+        /// Validation of the provided antiforgery token failed. The cookie token and the request token were swapped.
         /// </summary>
         internal static string FormatAntiforgeryToken_TokensSwapped()
         {
@@ -187,19 +187,51 @@ namespace Microsoft.AspNet.Antiforgery
         }
 
         /// <summary>
-        /// The form token must be provided.
+        /// The required antiforgery header value "{0}" is not present.
         /// </summary>
-        internal static string Antiforgery_FormToken_MustBeProvided_Generic
+        internal static string Antiforgery_HeaderToken_MustBeProvided
         {
-            get { return GetString("Antiforgery_FormToken_MustBeProvided_Generic"); }
+            get { return GetString("Antiforgery_HeaderToken_MustBeProvided"); }
         }
 
         /// <summary>
-        /// The form token must be provided.
+        /// The required antiforgery header value "{0}" is not present.
         /// </summary>
-        internal static string FormatAntiforgery_FormToken_MustBeProvided_Generic()
+        internal static string FormatAntiforgery_HeaderToken_MustBeProvided(object p0)
         {
-            return GetString("Antiforgery_FormToken_MustBeProvided_Generic");
+            return string.Format(CultureInfo.CurrentCulture, GetString("Antiforgery_HeaderToken_MustBeProvided"), p0);
+        }
+
+        /// <summary>
+        /// The required antiforgery form field "{0}" and header value "{1}" are not present.
+        /// </summary>
+        internal static string Antiforgery_RequestToken_MustBeProvided
+        {
+            get { return GetString("Antiforgery_RequestToken_MustBeProvided"); }
+        }
+
+        /// <summary>
+        /// The required antiforgery form field "{0}" and header value "{1}" are not present.
+        /// </summary>
+        internal static string FormatAntiforgery_RequestToken_MustBeProvided(object p0, object p1)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("Antiforgery_RequestToken_MustBeProvided"), p0, p1);
+        }
+
+        /// <summary>
+        /// The request token must be provided.
+        /// </summary>
+        internal static string Antiforgery_RequestToken_MustBeProvided_Generic
+        {
+            get { return GetString("Antiforgery_RequestToken_MustBeProvided_Generic"); }
+        }
+
+        /// <summary>
+        /// The request token must be provided.
+        /// </summary>
+        internal static string FormatAntiforgery_RequestToken_MustBeProvided_Generic()
+        {
+            return GetString("Antiforgery_RequestToken_MustBeProvided_Generic");
         }
 
         /// <summary>
