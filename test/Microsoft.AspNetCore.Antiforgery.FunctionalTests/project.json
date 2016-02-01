@@ -12,13 +12,16 @@
     "dnx451": {
       "dependencies": {
         "Moq": "4.2.1312.1622",
-        "System.Net.Http": "4.0.1-rc2-23621",
         "xunit.runner.console": "2.1.0"
+      },
+      "frameworkAssemblies": {
+        "System.Net.Http": ""
       }
     },
     "dnxcore50": {
       "dependencies": {
         "moq.netcore": "4.4.0-beta8",
+        "System.Net.Http": "4.0.1-*",
         "xunit.runner.aspnet": "2.0.0-aspnet-*"
       }
     }
