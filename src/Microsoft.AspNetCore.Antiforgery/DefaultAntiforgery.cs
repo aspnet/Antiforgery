@@ -172,18 +172,18 @@ namespace Microsoft.AspNetCore.Antiforgery
             CheckSSLConfig(httpContext);
 
             var cookieToken = GetCookieTokenDoesNotThrow(httpContext);
-            cookieToken = ValidateAndGenerateNewCookieToken(httpContext, cookieToken);
+            cookieToken = ValidateAndGenerateNewCookieToken(cookieToken);
             SaveCookieTokenAndHeader(httpContext, cookieToken);
         }
 
         // This method returns null if oldCookieToken is valid.
-        private AntiforgeryToken ValidateAndGenerateNewCookieToken(HttpContext httpContext, AntiforgeryToken cookieToken)
+        private AntiforgeryToken ValidateAndGenerateNewCookieToken(AntiforgeryToken cookieToken)
         {
-            if (!_tokenGenerator.IsCookieTokenValid(httpContext, cookieToken))
+            if (!_tokenGenerator.IsCookieTokenValid(cookieToken))
             {
                 // Need to make sure we're always operating with a good cookie token.
-                var newCookieToken = _tokenGenerator.GenerateCookieToken(httpContext);
-                Debug.Assert(_tokenGenerator.IsCookieTokenValid(httpContext, newCookieToken));
+                var newCookieToken = _tokenGenerator.GenerateCookieToken();
+                Debug.Assert(_tokenGenerator.IsCookieTokenValid(newCookieToken));
                 return newCookieToken;
             }
 
@@ -241,7 +241,7 @@ namespace Microsoft.AspNetCore.Antiforgery
         private AntiforgeryTokenSetInternal GetTokensInternal(HttpContext httpContext)
         {
             var cookieToken = GetCookieTokenDoesNotThrow(httpContext);
-            var newCookieToken = ValidateAndGenerateNewCookieToken(httpContext, cookieToken);
+            var newCookieToken = ValidateAndGenerateNewCookieToken(cookieToken);
             if (newCookieToken != null)
             {
                 cookieToken = newCookieToken;

@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Antiforgery
         }
 
         /// <inheritdoc />
-        public AntiforgeryToken GenerateCookieToken(HttpContext httpContext)
+        public AntiforgeryToken GenerateCookieToken()
         {
             return new AntiforgeryToken()
             {
@@ -46,10 +46,10 @@ namespace Microsoft.AspNetCore.Antiforgery
                 throw new ArgumentNullException(nameof(cookieToken));
             }
 
-            if (!IsCookieTokenValid(httpContext, cookieToken))
+            if (!IsCookieTokenValid(cookieToken))
             {
                 throw new ArgumentException(
-                    Resources.Antiforgery_CookieToken_MustBeProvided_Generic,
+                    Resources.Antiforgery_CookieToken_IsInvalid,
                     nameof(cookieToken));
             }
 
@@ -99,7 +99,7 @@ namespace Microsoft.AspNetCore.Antiforgery
         }
 
         /// <inheritdoc />
-        public bool IsCookieTokenValid(HttpContext httpContext, AntiforgeryToken cookieToken)
+        public bool IsCookieTokenValid(AntiforgeryToken cookieToken)
         {
             return cookieToken != null && cookieToken.IsCookieToken;
         }
