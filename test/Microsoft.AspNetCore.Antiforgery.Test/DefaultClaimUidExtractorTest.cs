@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Antiforgery
         public void ExtractClaimUid_NullIdentity()
         {
             // Arrange
-            IClaimUidExtractor extractor = new DefaultClaimUidExtractor(_pool);
+            var extractor = new DefaultClaimUidExtractor(_pool);
 
             // Act
             var claimUid = extractor.ExtractClaimUid(null);
@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.Antiforgery
         public void ExtractClaimUid_Unauthenticated()
         {
             // Arrange
-            IClaimUidExtractor extractor = new DefaultClaimUidExtractor(_pool);
+            var extractor = new DefaultClaimUidExtractor(_pool);
 
             var mockIdentity = new Mock<ClaimsIdentity>();
             mockIdentity.Setup(o => o.IsAuthenticated)
@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.Antiforgery
             mockIdentity.Setup(o => o.IsAuthenticated)
                         .Returns(true);
 
-            IClaimUidExtractor extractor = new DefaultClaimUidExtractor(_pool);
+            var extractor = new DefaultClaimUidExtractor(_pool);
 
             // Act
             var claimUid = extractor.ExtractClaimUid(mockIdentity.Object);

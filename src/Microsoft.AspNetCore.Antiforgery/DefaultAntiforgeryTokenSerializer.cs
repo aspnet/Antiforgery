@@ -44,12 +44,12 @@ namespace Microsoft.AspNetCore.Antiforgery
             {
                 var tokenBytes = WebEncoders.Base64UrlDecode(serializedToken);
                 var unprotectedBytes = _cryptoSystem.Unprotect(tokenBytes);
-                var stream = serializationContext.Memory;
+                var stream = serializationContext.Stream;
                 stream.Write(unprotectedBytes, 0, unprotectedBytes.Length);
                 stream.Position = 0L;
 
                 var reader = serializationContext.Reader;
-                var token = DeserializeImpl(reader);
+                var token = Deserialize(reader);
                 if (token != null)
                 {
                     return token;
@@ -81,7 +81,7 @@ namespace Microsoft.AspNetCore.Antiforgery
          *   |    `- Username: UTF-8 string with 7-bit integer length prefix
          *   `- AdditionalData: UTF-8 string with 7-bit integer length prefix
          */
-        private static AntiforgeryToken DeserializeImpl(BinaryReader reader)
+        private static AntiforgeryToken Deserialize(BinaryReader reader)
         {
             // we can only consume tokens of the same serialized version that we generate
             var embeddedVersion = reader.ReadByte();
@@ -155,7 +155,7 @@ namespace Microsoft.AspNetCore.Antiforgery
                 }
 
                 writer.Flush();
-                var stream = serializationContext.Memory;
+                var stream = serializationContext.Stream;
                 return WebEncoders.Base64UrlEncode(_cryptoSystem.Protect(stream.ToArray()));
             }
             finally

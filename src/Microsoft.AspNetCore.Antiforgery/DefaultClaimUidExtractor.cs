@@ -78,7 +78,7 @@ namespace Microsoft.AspNetCore.Antiforgery
                 writer.Flush();
 
                 var sha256 = serializationContext.Sha256;
-                var stream = serializationContext.Memory;
+                var stream = serializationContext.Stream;
                 var bytes = sha256.ComputeHash(stream.ToArray(), 0, checked((int)stream.Length));
 
                 return bytes;

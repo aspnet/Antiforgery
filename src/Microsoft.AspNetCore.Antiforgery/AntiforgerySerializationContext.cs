@@ -1,14 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Microsoft.AspNetCore.Antiforgery
 {
-    public class AntiforgerySerializationContext : IDisposable
+    public class AntiforgerySerializationContext
     {
         // Avoid allocating 256 bytes (the default) and using 18 (the AntiforgeryToken minimum). 64 bytes is enough for
         // a short username or claim UID and some additional data. MemoryStream bumps capacity to 256 if exceeded.
@@ -22,7 +21,7 @@ namespace Microsoft.AspNetCore.Antiforgery
         private BinaryWriter _writer;
         private SHA256 _sha256;
 
-        public MemoryStream Memory
+        public MemoryStream Stream
         {
             get
             {
@@ -46,7 +45,7 @@ namespace Microsoft.AspNetCore.Antiforgery
                 if (_reader == null)
                 {
                     // Leave open to clean up correctly even if only one of the reader or writer has been created.
-                    _reader = new BinaryReader(Memory, Encoding.UTF8, leaveOpen: true);
+                    _reader = new BinaryReader(Stream, Encoding.UTF8, leaveOpen: true);
                 }
 
                 return _reader;
@@ -64,7 +63,7 @@ namespace Microsoft.AspNetCore.Antiforgery
                 if (_writer == null)
                 {
                     // Leave open to clean up correctly even if only one of the reader or writer has been created.
-                    _writer = new BinaryWriter(Memory, Encoding.UTF8, leaveOpen: true);
+                    _writer = new BinaryWriter(Stream, Encoding.UTF8, leaveOpen: true);
                 }
 
                 return _writer;
@@ -92,41 +91,18 @@ namespace Microsoft.AspNetCore.Antiforgery
             }
         }
 
-        public void Dispose()
-        {
-            using (Reader)
-            {
-                Reader = null;
-            }
-
-            using (Writer)
-            {
-                Writer = null;
-            }
-
-            using (Memory)
-            {
-                Memory = null;
-            }
-
-            using (Sha256)
-            {
-                Sha256 = null;
-            }
-        }
-
         public void Reset()
         {
-            if (Memory.Capacity > MaximumStreamSize)
+            if (Stream.Capacity > MaximumStreamSize)
             {
-                Memory = null;
+                Stream = null;
                 Reader = null;
                 Writer = null;
             }
             else
             {
-                Memory.Position = 0L;
-                Memory.SetLength(0L);
+                Stream.Position = 0L;
+                Stream.SetLength(0L);
             }
         }
     }

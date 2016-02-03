@@ -33,7 +33,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddScoped<IAntiforgeryContextAccessor, DefaultAntiforgeryContextAccessor>();
             services.TryAddSingleton<IAntiforgeryAdditionalDataProvider, DefaultAntiforgeryAdditionalDataProvider>();
 
-            // Set up object pooling.
             services.TryAddSingleton<ObjectPoolProvider>(new DefaultObjectPoolProvider());
             services.TryAddSingleton<ObjectPool<AntiforgerySerializationContext>>(serviceProvider =>
             {
