@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace Microsoft.AspNetCore.Antiforgery
+namespace Microsoft.AspNetCore.Antiforgery.Internal
 {
     /// <summary>
     /// Allows providing or validating additional custom data for antiforgery tokens.
