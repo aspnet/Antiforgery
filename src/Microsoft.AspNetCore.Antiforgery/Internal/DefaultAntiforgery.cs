@@ -136,7 +136,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         // Internal for testing
-        internal void ValidateTokens(HttpContext httpContext, AntiforgeryTokenSet antiforgeryTokenSet)
+        private void ValidateTokens(HttpContext httpContext, AntiforgeryTokenSet antiforgeryTokenSet)
         {
             if (httpContext == null)
             {
