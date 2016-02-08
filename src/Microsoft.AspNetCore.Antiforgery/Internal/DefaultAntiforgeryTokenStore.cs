@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -25,10 +26,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
         public string GetCookieToken(HttpContext httpContext)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
+            Debug.Assert(httpContext != null);
 
             var requestCookie = httpContext.Request.Cookies[_options.CookieName];
             if (string.IsNullOrEmpty(requestCookie))
@@ -42,10 +40,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
         public async Task<AntiforgeryTokenSet> GetRequestTokensAsync(HttpContext httpContext)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
+            Debug.Assert(httpContext != null);
 
             var cookieToken = httpContext.Request.Cookies[_options.CookieName];
 
@@ -69,15 +64,8 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
         public void SaveCookieToken(HttpContext httpContext, string token)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            Debug.Assert(httpContext != null);
+            Debug.Assert(token != null);
 
             var options = new CookieOptions() { HttpOnly = true };
 

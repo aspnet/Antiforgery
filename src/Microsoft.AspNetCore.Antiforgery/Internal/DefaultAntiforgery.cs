@@ -140,26 +140,8 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
         private void ValidateTokens(HttpContext httpContext, AntiforgeryTokenSet antiforgeryTokenSet)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            CheckSSLConfig(httpContext);
-
-            if (string.IsNullOrEmpty(antiforgeryTokenSet.CookieToken))
-            {
-                throw new ArgumentException(
-                    Resources.Antiforgery_CookieToken_MustBeProvided_Generic,
-                    nameof(antiforgeryTokenSet));
-            }
-
-            if (string.IsNullOrEmpty(antiforgeryTokenSet.RequestToken))
-            {
-                throw new ArgumentException(
-                    Resources.Antiforgery_RequestToken_MustBeProvided_Generic,
-                    nameof(antiforgeryTokenSet));
-            }
+            Debug.Assert(!string.IsNullOrEmpty(antiforgeryTokenSet.CookieToken));
+            Debug.Assert(!string.IsNullOrEmpty(antiforgeryTokenSet.RequestToken));
 
             // Extract cookie & request tokens
             AntiforgeryToken deserializedCookieToken;
@@ -233,26 +215,22 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             CheckSSLConfig(httpContext);
 
-            var contextAccessor = GetCookieTokens(httpContext);
-            if (!contextAccessor.HaveStoredNewCookieToken && contextAccessor.NewCookieToken != null)
+            var antiforgeryContext = GetCookieTokens(httpContext);
+            if (!antiforgeryContext.HaveStoredNewCookieToken && antiforgeryContext.NewCookieToken != null)
             {
-                if (contextAccessor.NewCookieTokenString == null)
+                if (antiforgeryContext.NewCookieTokenString == null)
                 {
-                    contextAccessor.NewCookieTokenString = _tokenSerializer.Serialize(contextAccessor.NewCookieToken);
+                    antiforgeryContext.NewCookieTokenString =
+                        _tokenSerializer.Serialize(antiforgeryContext.NewCookieToken);
                 }
 
-                SaveCookieTokenAndHeader(httpContext, contextAccessor.NewCookieTokenString);
-                contextAccessor.HaveStoredNewCookieToken = true;
+                SaveCookieTokenAndHeader(httpContext, antiforgeryContext.NewCookieTokenString);
+                antiforgeryContext.HaveStoredNewCookieToken = true;
             }
         }
 
         private void SaveCookieTokenAndHeader(HttpContext httpContext, string cookieToken)
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
             if (cookieToken != null)
             {
                 // Persist the new cookie if it is not null.

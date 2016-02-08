@@ -149,11 +149,10 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
                 useOldCookie: false,
                 isOldCookieValid: false);
 
-            // This will cause the cookieToken to be null.
+            // Exception will cause the cookieToken to be null.
             context.TokenSerializer
                 .Setup(o => o.Deserialize("serialized-old-cookie-token"))
                 .Throws(new Exception("should be swallowed"));
-            // So...
             context.TokenGenerator
                 .Setup(o => o.IsCookieTokenValid(null))
                 .Returns(false);
