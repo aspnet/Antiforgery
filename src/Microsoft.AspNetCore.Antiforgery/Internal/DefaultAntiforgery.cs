@@ -45,9 +45,13 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             var antiforgeryContext = GetTokensInternal(httpContext);
             var tokenSet = Serialize(antiforgeryContext);
-            if (tokenSet.CookieToken != null)
+
+            if (!antiforgeryContext.HaveStoredNewCookieToken && antiforgeryContext.NewCookieToken != null)
             {
-                SaveCookieTokenAndHeader(httpContext, tokenSet.CookieToken);
+                // Serialize handles the new cookie token string.
+                Debug.Assert(antiforgeryContext.NewCookieTokenString != null);
+                SaveCookieTokenAndHeader(httpContext, antiforgeryContext.NewCookieTokenString);
+                antiforgeryContext.HaveStoredNewCookieToken = true;
             }
 
             return tokenSet;
@@ -164,47 +168,6 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             }
         }
 
-        private void DeserializeTokens(
-            HttpContext httpContext,
-            AntiforgeryTokenSet antiforgeryTokenSet,
-            out AntiforgeryToken cookieToken,
-            out AntiforgeryToken requestToken)
-        {
-            cookieToken = null;
-            requestToken = null;
-            var services = httpContext.RequestServices;
-            var contextAccessor = services.GetRequiredService<IAntiforgeryContextAccessor>();
-            if (contextAccessor.Value == null)
-            {
-                contextAccessor.Value = new AntiforgeryContext();
-            }
-
-            var antiforgeryContext = contextAccessor.Value;
-            if (antiforgeryContext.HaveDeserializedCookieToken)
-            {
-                cookieToken = antiforgeryContext.CookieToken;
-            }
-            else
-            {
-                cookieToken = _tokenSerializer.Deserialize(antiforgeryTokenSet.CookieToken);
-
-                antiforgeryContext.CookieToken = cookieToken;
-                antiforgeryContext.HaveDeserializedCookieToken = true;
-            }
-
-            if (antiforgeryContext.HaveDeserializedRequestToken)
-            {
-                requestToken = antiforgeryContext.RequestToken;
-            }
-            else
-            {
-                requestToken = _tokenSerializer.Deserialize(antiforgeryTokenSet.RequestToken);
-
-                antiforgeryContext.RequestToken = requestToken;
-                antiforgeryContext.HaveDeserializedRequestToken = true;
-            }
-        }
-
         /// <inheritdoc />
         public void SetCookieTokenAndHeader(HttpContext httpContext)
         {
@@ -269,7 +232,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             var antiforgeryContext = contextAccessor.Value;
             if (antiforgeryContext.HaveGeneratedNewCookieToken)
             {
-                Debug.Assert(contextAccessor.Value.HaveDeserializedCookieToken);
+                Debug.Assert(antiforgeryContext.HaveDeserializedCookieToken);
 
                 // Have executed this method earlier in the context of this request.
                 return antiforgeryContext;
@@ -358,6 +321,45 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
                 antiforgeryContext.NewCookieTokenString,
                 _options.FormFieldName,
                 _options.HeaderName);
+        }
+
+        private void DeserializeTokens(
+            HttpContext httpContext,
+            AntiforgeryTokenSet antiforgeryTokenSet,
+            out AntiforgeryToken cookieToken,
+            out AntiforgeryToken requestToken)
+        {
+            var services = httpContext.RequestServices;
+            var contextAccessor = services.GetRequiredService<IAntiforgeryContextAccessor>();
+            if (contextAccessor.Value == null)
+            {
+                contextAccessor.Value = new AntiforgeryContext();
+            }
+
+            var antiforgeryContext = contextAccessor.Value;
+            if (antiforgeryContext.HaveDeserializedCookieToken)
+            {
+                cookieToken = antiforgeryContext.CookieToken;
+            }
+            else
+            {
+                cookieToken = _tokenSerializer.Deserialize(antiforgeryTokenSet.CookieToken);
+
+                antiforgeryContext.CookieToken = cookieToken;
+                antiforgeryContext.HaveDeserializedCookieToken = true;
+            }
+
+            if (antiforgeryContext.HaveDeserializedRequestToken)
+            {
+                requestToken = antiforgeryContext.RequestToken;
+            }
+            else
+            {
+                requestToken = _tokenSerializer.Deserialize(antiforgeryTokenSet.RequestToken);
+
+                antiforgeryContext.RequestToken = requestToken;
+                antiforgeryContext.HaveDeserializedRequestToken = true;
+            }
         }
     }
 }

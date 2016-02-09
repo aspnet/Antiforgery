@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
@@ -16,8 +14,6 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 {
     public class DefaultAntiforgeryTokenStoreTest
     {
-        private static readonly ObjectPool<AntiforgerySerializationContext> _pool =
-            new DefaultObjectPoolProvider().Create(new AntiforgerySerializationContextPooledObjectPolicy());
         private readonly string _cookieName = "cookie-name";
 
         [Fact]
