@@ -45,12 +45,16 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
                 var count = serializedToken.Length;
                 var charsRequired = WebEncoders.GetArraySizeRequiredToDecode(count);
                 var chars = serializationContext.GetChars(charsRequired);
-                serializedToken.CopyTo(0, chars, 0, count);
-                var tokenBytes = WebEncoders.Base64UrlDecode(chars, 0, count);
+                var tokenBytes = WebEncoders.Base64UrlDecode(
+                    serializedToken,
+                    offset: 0,
+                    count: count,
+                    buffer: chars,
+                    bufferOffset: 0);
 
                 var unprotectedBytes = _cryptoSystem.Unprotect(tokenBytes);
                 var stream = serializationContext.Stream;
-                stream.Write(unprotectedBytes, 0, unprotectedBytes.Length);
+                stream.Write(unprotectedBytes, offset: 0, count: unprotectedBytes.Length);
                 stream.Position = 0L;
 
                 var reader = serializationContext.Reader;
@@ -166,9 +170,14 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
                 var count = bytes.Length;
                 var charsRequired = WebEncoders.GetArraySizeRequiredToEncode(count);
                 var chars = serializationContext.GetChars(charsRequired);
-                var outputLength = WebEncoders.Base64UrlEncode(bytes, 0, count, chars, 0);
+                var outputLength = WebEncoders.Base64UrlEncode(
+                    bytes,
+                    offset: 0,
+                    count: count,
+                    output: chars,
+                    outputOffset: 0);
 
-                return new string(chars, 0, outputLength);
+                return new string(chars, startIndex: 0, length: outputLength);
             }
             finally
             {
