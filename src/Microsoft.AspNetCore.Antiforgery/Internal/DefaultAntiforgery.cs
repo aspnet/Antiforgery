@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,13 +95,8 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             CheckSSLConfig(httpContext);
 
-            var method = httpContext.Request.Method;
-            if (string.Equals(method, "GET", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(method, "HEAD", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(method, "OPTIONS", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(method, "TRACE", StringComparison.OrdinalIgnoreCase))
+            if (!IsValidationRequired(httpContext))
             {
-                // Validation not needed for these request types.
                 return true;
             }
 
@@ -126,6 +122,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             string message;
             var result = _tokenGenerator.TryValidateTokenSet(
                 httpContext,
+                httpContext.User,
                 deserializedCookieToken,
                 deserializedRequestToken,
                 out message);
@@ -143,7 +140,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         /// <inheritdoc />
-        public async Task ValidateRequestAsync(HttpContext httpContext)
+        public Task ValidateRequestAsync(HttpContext httpContext)
         {
             if (httpContext == null)
             {
@@ -151,6 +148,29 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             }
 
             CheckSSLConfig(httpContext);
+
+            return ValidateRequestAsync(httpContext, httpContext.User);
+        }
+
+        /// <inheritdoc />
+        public async Task ValidateRequestAsync(HttpContext httpContext, ClaimsPrincipal principal)
+        {
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException(nameof(httpContext));
+            }
+
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
+            }
+
+            CheckSSLConfig(httpContext);
+
+            if (!IsValidationRequired(httpContext))
+            {
+                return;
+            }
 
             var tokens = await _tokenStore.GetRequestTokensAsync(httpContext);
             if (tokens.CookieToken == null)
@@ -180,12 +200,15 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
                 }
             }
 
-            ValidateTokens(httpContext, tokens);
+            ValidateTokens(httpContext, principal, tokens);
 
             _logger.ValidatedAntiforgeryToken();
         }
 
-        private void ValidateTokens(HttpContext httpContext, AntiforgeryTokenSet antiforgeryTokenSet)
+        private void ValidateTokens(
+            HttpContext httpContext,
+            ClaimsPrincipal principal,
+            AntiforgeryTokenSet antiforgeryTokenSet)
         {
             Debug.Assert(!string.IsNullOrEmpty(antiforgeryTokenSet.CookieToken));
             Debug.Assert(!string.IsNullOrEmpty(antiforgeryTokenSet.RequestToken));
@@ -203,6 +226,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             string message;
             if (!_tokenGenerator.TryValidateTokenSet(
                 httpContext,
+                principal,
                 deserializedCookieToken,
                 deserializedRequestToken,
                 out message))
@@ -266,6 +290,21 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
                     nameof(AntiforgeryOptions.RequireSsl),
                     "true"));
             }
+        }
+
+        private bool IsValidationRequired(HttpContext httpContext)
+        {
+            var method = httpContext.Request.Method;
+            if (string.Equals(method, "GET", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(method, "HEAD", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(method, "OPTIONS", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(method, "TRACE", StringComparison.OrdinalIgnoreCase))
+            {
+                // Validation not needed for these request types.
+                return false;
+            }
+
+            return true;
         }
 
         private AntiforgeryContext GetCookieTokens(HttpContext httpContext)
@@ -340,7 +379,10 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             if (antiforgeryContext.NewRequestToken == null)
             {
                 var cookieToken = antiforgeryContext.NewCookieToken ?? antiforgeryContext.CookieToken;
-                antiforgeryContext.NewRequestToken = _tokenGenerator.GenerateRequestToken(httpContext, cookieToken);
+                antiforgeryContext.NewRequestToken = _tokenGenerator.GenerateRequestToken(
+                    httpContext, 
+                    httpContext.User,
+                    cookieToken);
             }
 
             return antiforgeryContext;

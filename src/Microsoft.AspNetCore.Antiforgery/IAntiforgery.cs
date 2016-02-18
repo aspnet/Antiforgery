@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -54,6 +55,16 @@ namespace Microsoft.AspNetCore.Antiforgery
         /// Thrown when the request does not include a valid antiforgery token.
         /// </exception>
         Task ValidateRequestAsync(HttpContext httpContext);
+
+        /// <summary>
+        /// Validates an antiforgery token that was supplied as part of the request.
+        /// </summary>
+        /// <param name="httpContext">The <see cref="HttpContext"/> associated with the current request.</param>
+        /// <param name="principal">The claims-based principal to validate.</param>
+        /// <exception cref="AntiforgeryValidationException">
+        /// Thrown when the request does not include a valid antiforgery token.
+        /// </exception>
+        Task ValidateRequestAsync(HttpContext httpContext, ClaimsPrincipal principal);
 
         /// <summary>
         /// Generates and stores an antiforgery cookie token if one is not available or not valid.
