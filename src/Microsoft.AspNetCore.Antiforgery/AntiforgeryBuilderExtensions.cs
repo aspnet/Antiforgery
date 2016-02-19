@@ -23,7 +23,6 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(app));
             }
 
-
             return app.UseMiddleware<AntiforgeryMiddleware>();
         }
     }

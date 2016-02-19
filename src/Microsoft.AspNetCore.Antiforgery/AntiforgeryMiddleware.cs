@@ -13,6 +13,9 @@ namespace Microsoft.AspNetCore.Antiforgery
     /// </summary>
     public class AntiforgeryMiddleware
     {
+        private readonly IAntiforgery _antiforgery;
+        private readonly RequestDelegate _next;
+
         /// <summary>
         /// Creates a new <see cref="AntiforgeryMiddleware"/>.
         /// </summary>
@@ -30,19 +33,9 @@ namespace Microsoft.AspNetCore.Antiforgery
                 throw new ArgumentNullException(nameof(antiforgery));
             }
 
-            Next = next;
-            Antiforgery = antiforgery;
+            _next = next;
+            _antiforgery = antiforgery;
         }
-
-        /// <summary>
-        /// Gets the <see cref="IAntiforgery"/>.
-        /// </summary>
-        protected IAntiforgery Antiforgery { get; }
-
-        /// <summary>
-        /// Gets the <see cref="RequestDelegate"/> for the next middleware.
-        /// </summary>
-        protected RequestDelegate Next { get; }
 
         /// <summary>
         /// Invokes the middleware for the given <paramref name="httpContext"/>.
@@ -56,15 +49,17 @@ namespace Microsoft.AspNetCore.Antiforgery
                 throw new ArgumentNullException(nameof(httpContext));
             }
 
-            var handler = CreateHandler();
+            var handler = new AntiforgeryAuthenticationHandler(_antiforgery);
             await handler.InitializeAsync(httpContext);
 
-            await Next(httpContext);
-        }
-
-        private AntiforgeryAuthenticationHandler CreateHandler()
-        {
-            return new AntiforgeryAuthenticationHandler(Antiforgery);
+            try
+            {
+                await _next(httpContext);
+            }
+            finally
+            {
+                handler.Teardown();
+            }
         }
     }
 }

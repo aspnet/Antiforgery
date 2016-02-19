@@ -1,8 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Http.Features.Authentication.Internal;
@@ -11,29 +11,37 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 {
     public class AntiforgeryAuthenticationHandler : IAuthenticationHandler
     {
+        private readonly IAntiforgery _antiforgery;
+        private HttpContext _httpContext;
+        private IAuthenticationHandler _priorHandler;
+
         public AntiforgeryAuthenticationHandler(IAntiforgery antiforgery)
         {
-            Antiforgery = antiforgery;
+            if (antiforgery == null)
+            {
+                throw new ArgumentNullException(nameof(antiforgery));
+            }
+
+            _antiforgery = antiforgery;
         }
 
-        protected IAntiforgery Antiforgery { get; }
-
-        public HttpContext HttpContext { get; private set; }
-
-        public IAuthenticationHandler PriorHandler { get; private set; }
-
-        public async Task InitializeAsync(HttpContext context)
+        public async Task InitializeAsync(HttpContext httpContext)
         {
-            HttpContext = context;
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException(nameof(httpContext));
+            }
 
-            var authentication = GetAuthenticationFeature(HttpContext);
+            _httpContext = httpContext;
 
-            PriorHandler = authentication.Handler;
+            var authentication = GetAuthenticationFeature(_httpContext);
+
+            _priorHandler = authentication.Handler;
             authentication.Handler = this;
 
             if (authentication.User != null)
             {
-                if (!await Antiforgery.IsRequestValidAsync(HttpContext))
+                if (!await _antiforgery.IsRequestValidAsync(_httpContext))
                 {
                     // Wipe out any existing principal if we can't validate this request.
                     authentication.User = null;
@@ -42,19 +50,30 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             }
         }
 
+        public void Teardown()
+        {
+            var authentication = GetAuthenticationFeature(_httpContext);
+            authentication.Handler = _priorHandler;
+        }
+
         /// <inheritdoc />
         public async Task AuthenticateAsync(AuthenticateContext context)
         {
-            if (PriorHandler != null)
+            if (context == null)
             {
-                await PriorHandler.AuthenticateAsync(context);
+                throw new ArgumentNullException(nameof(context));
+            }
 
-                var authentication = GetAuthenticationFeature(HttpContext);
+            if (_priorHandler != null)
+            {
+                await _priorHandler.AuthenticateAsync(context);
+
+                var authentication = GetAuthenticationFeature(_httpContext);
                 if (context.Principal != null)
                 {
                     try
                     {
-                        await Antiforgery.ValidateRequestAsync(HttpContext, context.Principal);
+                        await _antiforgery.ValidateRequestAsync(_httpContext, context.Principal);
                     }
                     catch (AntiforgeryValidationException ex)
                     {
@@ -68,9 +87,14 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         /// <inheritdoc />
         public Task ChallengeAsync(ChallengeContext context)
         {
-            if (PriorHandler != null)
+            if (context == null)
             {
-                return PriorHandler.ChallengeAsync(context);
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (_priorHandler != null)
+            {
+                return _priorHandler.ChallengeAsync(context);
             }
 
             return TaskCache.CompletedTask;
@@ -79,18 +103,28 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         /// <inheritdoc />
         public void GetDescriptions(DescribeSchemesContext context)
         {
-            if (PriorHandler != null)
+            if (context == null)
             {
-                PriorHandler.GetDescriptions(context);
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (_priorHandler != null)
+            {
+                _priorHandler.GetDescriptions(context);
             }
         }
 
         /// <inheritdoc />
         public Task SignInAsync(SignInContext context)
         {
-            if (PriorHandler != null)
+            if (context == null)
             {
-                return PriorHandler.SignInAsync(context);
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (_priorHandler != null)
+            {
+                return _priorHandler.SignInAsync(context);
             }
 
             return TaskCache.CompletedTask;
@@ -99,9 +133,14 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         /// <inheritdoc />
         public Task SignOutAsync(SignOutContext context)
         {
-            if (PriorHandler != null)
+            if (context == null)
             {
-                return PriorHandler.SignOutAsync(context);
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (_priorHandler != null)
+            {
+                return _priorHandler.SignOutAsync(context);
             }
 
             return TaskCache.CompletedTask;
