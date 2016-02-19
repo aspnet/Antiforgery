@@ -16,6 +16,22 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 {
     public class DefaultAntiforgeryTest
     {
+        public static TheoryData<string> SafeHttpMethods => new TheoryData<string>()
+        {
+            "GeT",
+            "HEAD",
+            "options",
+            "TrAcE",
+        };
+
+        public static TheoryData<string> UnsafeHttpMethods => new TheoryData<string>()
+        {
+            "PUT",
+            "post",
+            "Delete",
+            "Custom",
+        };
+
         [Fact]
         public async Task ChecksSSL_ValidateRequestAsync_Throws()
         {
@@ -566,10 +582,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Theory]
-        [InlineData("GeT")]
-        [InlineData("HEAD")]
-        [InlineData("options")]
-        [InlineData("TrAcE")]
+        [MemberData(nameof(SafeHttpMethods))]
         public async Task IsRequestValidAsync_SkipsAntiforgery_ForSafeHttpMethods(string httpMethod)
         {
             // Arrange
@@ -605,10 +618,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Theory]
-        [InlineData("PUT")]
-        [InlineData("post")]
-        [InlineData("Delete")]
-        [InlineData("Custom")]
+        [MemberData(nameof(UnsafeHttpMethods))]
         public async Task IsRequestValidAsync_ValidatesAntiforgery_ForNonSafeHttpMethods(string httpMethod)
         {
             // Arrange
@@ -912,10 +922,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Theory]
-        [InlineData("GeT")]
-        [InlineData("HEAD")]
-        [InlineData("options")]
-        [InlineData("TrAcE")]
+        [MemberData(nameof(SafeHttpMethods))]
         public async Task ValidateRequestAsync_SkipsAntiforgery_ForSafeHttpMethods(string httpMethod)
         {
             // Arrange
@@ -950,10 +957,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Theory]
-        [InlineData("PUT")]
-        [InlineData("post")]
-        [InlineData("Delete")]
-        [InlineData("Custom")]
+        [MemberData(nameof(UnsafeHttpMethods))]
         public async Task ValidateRequestAsync_ValidatesAntiforgery_ForNonSafeHttpMethods(string httpMethod)
         {
             // Arrange
