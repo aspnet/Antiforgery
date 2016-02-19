@@ -48,21 +48,19 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             if (PriorHandler != null)
             {
                 await PriorHandler.AuthenticateAsync(context);
-            }
 
-            var authentication = GetAuthenticationFeature(HttpContext);
-            var oldPrincipal = authentication.User;
-
-            if (context.Principal != null)
-            {
-                try
-                { 
-                    await Antiforgery.ValidateRequestAsync(HttpContext, context.Principal);
-                }
-                catch (AntiforgeryValidationException ex)
+                var authentication = GetAuthenticationFeature(HttpContext);
+                if (context.Principal != null)
                 {
-                    context.Failed(ex);
-                    return;
+                    try
+                    {
+                        await Antiforgery.ValidateRequestAsync(HttpContext, context.Principal);
+                    }
+                    catch (AntiforgeryValidationException ex)
+                    {
+                        context.Failed(ex);
+                        return;
+                    }
                 }
             }
         }
