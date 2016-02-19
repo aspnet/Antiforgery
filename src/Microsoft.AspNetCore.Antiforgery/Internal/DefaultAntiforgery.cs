@@ -86,11 +86,29 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         /// <inheritdoc />
-        public async Task<bool> IsRequestValidAsync(HttpContext httpContext)
+        public Task<bool> IsRequestValidAsync(HttpContext httpContext)
         {
             if (httpContext == null)
             {
                 throw new ArgumentNullException(nameof(httpContext));
+            }
+
+            CheckSSLConfig(httpContext);
+
+            return IsRequestValidAsync(httpContext, httpContext.User);
+        }
+
+        /// <inheritdoc />
+        public async Task<bool> IsRequestValidAsync(HttpContext httpContext, ClaimsPrincipal principal)
+        {
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException(nameof(httpContext));
+            }
+
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
             }
 
             CheckSSLConfig(httpContext);
@@ -122,7 +140,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             string message;
             var result = _tokenGenerator.TryValidateTokenSet(
                 httpContext,
-                httpContext.User,
+                principal,
                 deserializedCookieToken,
                 deserializedRequestToken,
                 out message);

@@ -78,6 +78,27 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Fact]
+        public async Task ChecksSSL_IsRequestValidAsync_WithPrincipal_Throws()
+        {
+            // Arrange
+            var httpContext = GetHttpContext();
+            var options = new AntiforgeryOptions()
+            {
+                RequireSsl = true
+            };
+
+            var antiforgery = GetAntiforgery(httpContext, options);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => antiforgery.IsRequestValidAsync(httpContext, new ClaimsPrincipal()));
+            Assert.Equal(
+                @"The antiforgery system has the configuration value AntiforgeryOptions.RequireSsl = true, " +
+                "but the current request is not an SSL request.",
+                exception.Message);
+        }
+
+        [Fact]
         public void ChecksSSL_GetAndStoreTokens_Throws()
         {
             // Arrange
@@ -609,6 +630,68 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             // Act
             var result = await antiforgery.IsRequestValidAsync(context.HttpContext);
+
+            // Assert
+            Assert.True(result);
+            context.TokenGenerator.Verify();
+        }
+
+        [Fact]
+        public async Task IsRequestValidAsync_UsesPrincipalFromHttpContext()
+        {
+            // Arrange
+            var context = CreateMockContext(new AntiforgeryOptions());
+            context.HttpContext.Request.Method = "POST";
+
+            var principal = new ClaimsPrincipal();
+            context.HttpContext.User = principal;
+
+            string message;
+            context.TokenGenerator
+                .Setup(o => o.TryValidateTokenSet(
+                    context.HttpContext,
+                    principal,
+                    It.IsAny<AntiforgeryToken>(),
+                    It.IsAny<AntiforgeryToken>(),
+                    out message))
+                .Returns(true)
+                .Verifiable();
+
+            var antiforgery = GetAntiforgery(context);
+
+            // Act
+            var result = await antiforgery.IsRequestValidAsync(context.HttpContext);
+
+            // Assert
+            Assert.True(result);
+            context.TokenGenerator.Verify();
+        }
+
+        [Fact]
+        public async Task IsRequestValidAsync_UsesPassedInPrincipal()
+        {
+            // Arrange
+            var context = CreateMockContext(new AntiforgeryOptions());
+            context.HttpContext.Request.Method = "POST";
+
+            var principal = new ClaimsPrincipal();
+            context.HttpContext.User = new ClaimsPrincipal(); // This should be ignored.
+
+            string message;
+            context.TokenGenerator
+                .Setup(o => o.TryValidateTokenSet(
+                    context.HttpContext,
+                    principal,
+                    It.IsAny<AntiforgeryToken>(),
+                    It.IsAny<AntiforgeryToken>(),
+                    out message))
+                .Returns(true)
+                .Verifiable();
+
+            var antiforgery = GetAntiforgery(context);
+
+            // Act
+            var result = await antiforgery.IsRequestValidAsync(context.HttpContext, principal);
 
             // Assert
             Assert.True(result);
