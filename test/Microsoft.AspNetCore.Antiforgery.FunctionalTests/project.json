@@ -14,7 +14,7 @@
           "type": "platform"
         },
         "moq.netcore": "4.4.0-beta8",
-        "System.Net.Http": "4.1.0-*",
+        "System.Net.Http": "4.1.1-servicing-24703-01",
         "System.Diagnostics.Process": "4.1.0-*"
       },
       "imports": [
