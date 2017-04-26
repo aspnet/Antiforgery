@@ -2,7 +2,7 @@
   "dependencies": {
     "dotnet-test-xunit": "1.0.0-*",
     "AntiforgerySample": "1.0.0-*",
-    "Microsoft.AspNetCore.TestHost": "1.0.2",
+    "Microsoft.AspNetCore.TestHost": "1.0.3",
     "Microsoft.AspNetCore.Testing": "1.0.1"
   },
   "testRunner": "xunit",
@@ -10,11 +10,11 @@
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "version": "1.0.4",
+          "version": "1.0.5",
           "type": "platform"
         },
         "moq.netcore": "4.4.0-beta8",
-        "System.Net.Http": "4.1.1",
+        "System.Net.Http": "4.1.2",
         "System.Diagnostics.Process": "4.1.0"
       },
       "imports": [
