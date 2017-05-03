@@ -1236,7 +1236,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Theory]
-        [InlineData("Cache-Control", "no-cache")]
+        [InlineData("Cache-Control", "no-cache, no-store")]
         [InlineData("Pragma", "no-cache")]
         public void GetAndStoreTokens_DoesNotLogsWarning_ForNoCacheHeaders_AlreadyPresent(string headerName, string headerValue)
         {
