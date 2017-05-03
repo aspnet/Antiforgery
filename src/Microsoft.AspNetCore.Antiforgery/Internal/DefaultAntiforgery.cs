@@ -371,25 +371,33 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         /// <param name="httpContext">The <see cref="HttpContext"/>.</param>
         protected virtual void SetDoNotCacheHeaders(HttpContext httpContext)
         {
+            CacheControlHeaderValue cacheControlHeaderValue;
+            CacheControlHeaderValue.TryParse(httpContext.Response.Headers[HeaderNames.CacheControl], out cacheControlHeaderValue);
+
             // Since antifogery token generation is not very obvious to the end users (ex: MVC's form tag generates them
             // by default), log a warning to let users know of the change in behavior to any cache headers they might
             // have set explicitly.
-            LogCacheHeaderOverrideWarning(httpContext.Response);
+            LogCacheHeaderOverrideWarning(httpContext.Response, cacheControlHeaderValue);
 
-            httpContext.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store";
+            var newCacheControlHeaderValue = "no-cache, no-store";
+
+            if (cacheControlHeaderValue != null)
+            {
+                cacheControlHeaderValue.NoCache = true;
+                cacheControlHeaderValue.NoStore = true;
+                newCacheControlHeaderValue = cacheControlHeaderValue.ToString();
+            }
+
+            httpContext.Response.Headers[HeaderNames.CacheControl] = newCacheControlHeaderValue;
             httpContext.Response.Headers[HeaderNames.Pragma] = "no-cache";
         }
 
-        private void LogCacheHeaderOverrideWarning(HttpResponse response)
+        private void LogCacheHeaderOverrideWarning(HttpResponse response, CacheControlHeaderValue cacheControlHeaderValue)
         {
             var logWarning = false;
-            CacheControlHeaderValue cacheControlHeaderValue;
-            if (CacheControlHeaderValue.TryParse(response.Headers[HeaderNames.CacheControl], out cacheControlHeaderValue))
+            if (cacheControlHeaderValue?.NoCache != true || !cacheControlHeaderValue.NoStore)
             {
-                if (!cacheControlHeaderValue.NoCache)
-                {
-                    logWarning = true;
-                }
+                logWarning = true;
             }
 
             var pragmaHeader = response.Headers[HeaderNames.Pragma];
