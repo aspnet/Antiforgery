@@ -345,6 +345,37 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         [Fact]
+        public void GetAndStoreTokens_ExistingCachingHeaders_Updated()
+        {
+            // Arrange
+            var antiforgeryFeature = new AntiforgeryFeature();
+            var context = CreateMockContext(
+                new AntiforgeryOptions(),
+                useOldCookie: true,
+                isOldCookieValid: true,
+                antiforgeryFeature: antiforgeryFeature);
+            var antiforgery = GetAntiforgery(context);
+            context.HttpContext.Response.Headers["Cache-Control"] = "must-revalidate";
+
+            // Act
+            var tokenSet = antiforgery.GetAndStoreTokens(context.HttpContext);
+
+            // Assert
+            // We shouldn't have saved the cookie because it already existed.
+            context.TokenStore.Verify(
+                t => t.SaveCookieToken(It.IsAny<HttpContext>(), It.IsAny<string>()),
+                Times.Never);
+
+            Assert.Null(tokenSet.CookieToken);
+            Assert.Equal(context.TestTokenSet.FormTokenString, tokenSet.RequestToken);
+
+            Assert.NotNull(antiforgeryFeature);
+            Assert.Equal(context.TestTokenSet.OldCookieToken, antiforgeryFeature.CookieToken);
+            Assert.Equal("no-cache, no-store, must-revalidate", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
+            Assert.Equal("no-cache", context.HttpContext.Response.Headers[HeaderNames.Pragma]);
+        }
+
+        [Fact]
         public void GetAndStoreTokens_NoExistingCookieToken_Saved()
         {
             // Arrange
