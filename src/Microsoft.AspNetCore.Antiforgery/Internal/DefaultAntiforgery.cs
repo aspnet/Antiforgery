@@ -366,7 +366,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         }
 
         /// <summary>
-        /// Sets the 'Cache-Control' header to 'no-cache, no-store' and 'Pragma' header to 'no-cache' overriding any user set value.
+        /// Sets the 'Cache-Control' header to 'no-store, no-cache' and 'Pragma' header to 'no-cache' overriding any user set value.
         /// </summary>
         /// <param name="httpContext">The <see cref="HttpContext"/>.</param>
         protected virtual void SetDoNotCacheHeaders(HttpContext httpContext)
@@ -379,12 +379,14 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             // have set explicitly.
             LogCacheHeaderOverrideWarning(httpContext.Response, cacheControlHeaderValue);
 
-            var newCacheControlHeaderValue = "no-cache, no-store";
+            var newCacheControlHeaderValue = "no-store, no-cache";
 
             if (cacheControlHeaderValue != null)
             {
                 cacheControlHeaderValue.NoCache = true;
                 cacheControlHeaderValue.NoStore = true;
+                cacheControlHeaderValue.Public = false;
+                cacheControlHeaderValue.Private = false;
                 newCacheControlHeaderValue = cacheControlHeaderValue.ToString();
             }
 
@@ -395,7 +397,8 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         private void LogCacheHeaderOverrideWarning(HttpResponse response, CacheControlHeaderValue cacheControlHeaderValue)
         {
             var logWarning = false;
-            if (cacheControlHeaderValue?.NoCache != true || !cacheControlHeaderValue.NoStore)
+            if (cacheControlHeaderValue != null 
+                && (!cacheControlHeaderValue.NoCache || !cacheControlHeaderValue.NoStore))
             {
                 logWarning = true;
             }

@@ -309,7 +309,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             Assert.NotNull(antiforgeryFeature);
             Assert.Equal(context.TestTokenSet.OldCookieToken, antiforgeryFeature.CookieToken);
-            Assert.Equal("no-cache, no-store", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
+            Assert.Equal("no-store, no-cache", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers[HeaderNames.Pragma]);
         }
 
@@ -340,7 +340,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             Assert.NotNull(antiforgeryFeature);
             Assert.Equal(context.TestTokenSet.OldCookieToken, antiforgeryFeature.CookieToken);
-            Assert.Equal("no-cache, no-store", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
+            Assert.Equal("no-store, no-cache", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers[HeaderNames.Pragma]);
         }
 
@@ -371,7 +371,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
 
             Assert.NotNull(antiforgeryFeature);
             Assert.Equal(context.TestTokenSet.OldCookieToken, antiforgeryFeature.CookieToken);
-            Assert.Equal("no-cache, no-store, must-revalidate", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
+            Assert.Equal("no-store, must-revalidate, no-cache", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers[HeaderNames.Pragma]);
         }
 
@@ -435,7 +435,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             Assert.NotNull(antiforgeryFeature);
             Assert.True(antiforgeryFeature.HaveDeserializedCookieToken);
             Assert.Equal(context.TestTokenSet.OldCookieToken, antiforgeryFeature.CookieToken);
-            Assert.Equal("no-cache, no-store", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
+            Assert.Equal("no-store, no-cache", context.HttpContext.Response.Headers[HeaderNames.CacheControl]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers[HeaderNames.Pragma]);
         }
 
@@ -957,7 +957,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             antiforgery.SetCookieTokenAndHeader(context.HttpContext);
 
             // Assert
-            Assert.Equal("no-cache, no-store", context.HttpContext.Response.Headers["Cache-Control"]);
+            Assert.Equal("no-store, no-cache", context.HttpContext.Response.Headers["Cache-Control"]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers["Pragma"]);
         }
 
@@ -980,7 +980,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             antiforgery.SetCookieTokenAndHeader(context.HttpContext);
 
             // Assert
-            Assert.Equal("no-cache, no-store", context.HttpContext.Response.Headers["Cache-Control"]);
+            Assert.Equal("no-store, no-cache", context.HttpContext.Response.Headers["Cache-Control"]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers["Pragma"]);
         }
 
@@ -1004,7 +1004,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
             antiforgery.SetCookieTokenAndHeader(context.HttpContext);
 
             // Assert
-            Assert.Equal("no-cache, no-store", context.HttpContext.Response.Headers["Cache-Control"]);
+            Assert.Equal("no-store, no-cache", context.HttpContext.Response.Headers["Cache-Control"]);
             Assert.Equal("no-cache", context.HttpContext.Response.Headers["Pragma"]);
         }
 
