@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
     {
         private const string ResponseCacheHeadersOverrideWarningMessage =
             "The 'Cache-Control' and 'Pragma' headers have been overridden and set to 'no-cache, no-store' and " +
-             "'no-cache' respectively to prevent caching of this response. Any response that uses antiforgery " +
+            "'no-cache' respectively to prevent caching of this response. Any response that uses antiforgery " +
             "should not be cached.";
 
         [Fact]
