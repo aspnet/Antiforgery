@@ -397,6 +397,7 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         private void LogCacheHeaderOverrideWarning(HttpResponse response, CacheControlHeaderValue cacheControlHeaderValue)
         {
             var logWarning = false;
+
             if (cacheControlHeaderValue != null 
                 && (!cacheControlHeaderValue.NoCache || !cacheControlHeaderValue.NoStore))
             {
