@@ -2,7 +2,7 @@
   "dependencies": {
     "dotnet-test-xunit": "1.0.0-*",
     "AntiforgerySample": "1.0.0-*",
-    "Microsoft.AspNetCore.TestHost": "1.0.3",
+    "Microsoft.AspNetCore.TestHost": "1.0.4",
     "Microsoft.AspNetCore.Testing": "1.0.1"
   },
   "testRunner": "xunit",
