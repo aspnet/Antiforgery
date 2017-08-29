@@ -19,7 +19,8 @@ namespace Microsoft.AspNetCore.Antiforgery
         private CookieBuilder _cookieBuilder = new CookieBuilder
         {
             SameSite = SameSiteMode.Strict,
-            HttpOnly = true
+            HttpOnly = true,
+            SecurePolicy = CookieSecurePolicy.None
         };
 
         /// <summary>
