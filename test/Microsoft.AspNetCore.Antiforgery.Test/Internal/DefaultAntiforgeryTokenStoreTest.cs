@@ -242,7 +242,10 @@ namespace Microsoft.AspNetCore.Antiforgery.Internal
         [InlineData(true, CookieSecurePolicy.Always, true)]
         [InlineData(false, CookieSecurePolicy.None, null)]
         [InlineData(true, CookieSecurePolicy.None, null)]
-        public void SaveCookieToken_HonorsCookieSecurePolicy_OnOptions(bool isRequestSecure, CookieSecurePolicy policy, bool? expectedCookieSecureFlag)
+        public void SaveCookieToken_HonorsCookieSecurePolicy_OnOptions(
+            bool isRequestSecure,
+            CookieSecurePolicy policy,
+            bool? expectedCookieSecureFlag)
         {
             // Arrange
             var token = "serialized-value";
