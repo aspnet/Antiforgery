@@ -1,12 +1,12 @@
 ﻿<Project>
   <PropertyGroup>
-    <InternalAspNetCoreSdkPackageVersion>2.0.2-beta-15522</InternalAspNetCoreSdkPackageVersion>
-    <MicrosoftAspNetCoreDataProtectionPackageVersion>2.0.1-rtm-83</MicrosoftAspNetCoreDataProtectionPackageVersion>
-    <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.1-rtm-83</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
-    <MicrosoftAspNetCoreHttpExtensionsPackageVersion>2.0.1-rtm-83</MicrosoftAspNetCoreHttpExtensionsPackageVersion>
-    <MicrosoftAspNetCoreHttpPackageVersion>2.0.1-rtm-83</MicrosoftAspNetCoreHttpPackageVersion>
+    <InternalAspNetCoreSdkPackageVersion>2.0.2-rc1-15526</InternalAspNetCoreSdkPackageVersion>
+    <MicrosoftAspNetCoreDataProtectionPackageVersion>2.0.1-rtm-105</MicrosoftAspNetCoreDataProtectionPackageVersion>
+    <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.1-rtm-105</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
+    <MicrosoftAspNetCoreHttpExtensionsPackageVersion>2.0.1-rtm-105</MicrosoftAspNetCoreHttpExtensionsPackageVersion>
+    <MicrosoftAspNetCoreHttpPackageVersion>2.0.1-rtm-105</MicrosoftAspNetCoreHttpPackageVersion>
     <MicrosoftAspNetCoreTestingPackageVersion>2.0.0</MicrosoftAspNetCoreTestingPackageVersion>
-    <MicrosoftAspNetCoreWebUtilitiesPackageVersion>2.0.1-rtm-83</MicrosoftAspNetCoreWebUtilitiesPackageVersion>
+    <MicrosoftAspNetCoreWebUtilitiesPackageVersion>2.0.1-rtm-105</MicrosoftAspNetCoreWebUtilitiesPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>2.0.0</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftExtensionsLoggingPackageVersion>2.0.0</MicrosoftExtensionsLoggingPackageVersion>
     <MicrosoftExtensionsLoggingTestingPackageVersion>2.0.0</MicrosoftExtensionsLoggingTestingPackageVersion>
